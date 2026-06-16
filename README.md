@@ -67,7 +67,7 @@ Desenvolver um sistema web para apoiar a gestão das oficinas do Projeto ELLP, p
 
 ### Usuário
 
-Responsável por acessar e administrar o sistema.
+Responsável por autenticação e acesso ao sistema.
 
 **Atributos:**
 
@@ -85,9 +85,9 @@ Participante das oficinas ofertadas pelo Projeto ELLP.
 * Nome
 * Idade
 * Série
-* Endereço
 * Telefone
 * E-mail
+* Endereço
 
 ### Voluntário
 
@@ -180,28 +180,32 @@ erDiagram
     USUARIO_ROLE {
         UUID usuario_id FK
         UUID role_id FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     ROLE_PERMISSION {
         UUID role_id FK
         UUID permission_id FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     ALUNO {
         UUID id PK
-        UUID usuario_id FK
         INTEGER idade
         VARCHAR serie
         VARCHAR telefone
+        varchar email
         VARCHAR endereco
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     OFICINA {
-        UUID id PK
-        UUID professor_id FK
-        UUID certificado_id FK
+        BIGINT id PK
+        BIGINT professor_id FK
+        BIGINT certificado_id FK
         VARCHAR titulo
         TEXT descricao
         VARCHAR sala
@@ -213,7 +217,7 @@ erDiagram
     }
 
     CERTIFICADO {
-        UUID id PK
+        BIGINT id PK
         VARCHAR nome
         TEXT descricao
         BOOLEAN requer_assinatura
@@ -223,9 +227,9 @@ erDiagram
     }
 
     MATRICULA {
-        UUID id PK
-        UUID aluno_id FK
-        UUID oficina_id FK
+        BIGINT id PK
+        BIGINT aluno_id FK
+        BIGINT oficina_id FK
         DATE data_matricula
         BOOLEAN certificado_emitido
         TIMESTAMP created_at
@@ -233,8 +237,8 @@ erDiagram
     }
 
     ENCONTRO {
-        UUID id PK
-        UUID oficina_id FK
+        BIGINT id PK
+        BIGINT oficina_id FK
         DATE data
         TIME horario_inicio
         TIME horario_fim
@@ -243,24 +247,26 @@ erDiagram
     }
 
     FREQUENCIA {
-        UUID id PK
-        UUID matricula_id FK
-        UUID encontro_id FK
+        BIGINT id PK
+        BIGINT matricula_id FK
+        BIGINT encontro_id FK
         BOOLEAN presente
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
 
     OFICINA_USUARIO {
-        UUID oficina_id FK
-        UUID usuario_id FK
+        BIGINT oficina_id FK
+        BIGINT usuario_id FK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     AUDIT_LOG {
-        UUID id PK
-        UUID usuario_id FK
+        BIGINT id PK
+        BIGINT usuario_id FK
         VARCHAR entidade
-        UUID entidade_id
+        BIGINT entidade_id
         VARCHAR acao
         TEXT detalhes
         TIMESTAMP created_at
@@ -271,8 +277,6 @@ erDiagram
 
     ROLE ||--o{ ROLE_PERMISSION : possui
     PERMISSION ||--o{ ROLE_PERMISSION : atribuida
-
-    USUARIO ||--o| ALUNO : representa
 
     USUARIO ||--o{ OFICINA : ministra
 
