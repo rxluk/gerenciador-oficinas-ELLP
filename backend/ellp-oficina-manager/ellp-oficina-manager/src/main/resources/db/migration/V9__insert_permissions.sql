@@ -1,0 +1,41 @@
+INSERT INTO permission (nome) VALUES
+
+    -- USUARIO
+    ('CREATE_USUARIO'),
+    ('READ_USUARIO'),
+    ('UPDATE_USUARIO'),
+
+    -- ROLE
+    ('CREATE_ROLE'),
+    ('READ_ROLE'),
+    ('UPDATE_ROLE'),
+
+    -- ALUNO
+    ('CREATE_ALUNO'),
+    ('READ_ALUNO'),
+    ('UPDATE_ALUNO'),
+
+    -- OFICINA
+    ('CREATE_OFICINA'),
+    ('READ_OFICINA'),
+    ('UPDATE_OFICINA'),
+
+    -- MATRICULA
+    ('CREATE_MATRICULA'),
+    ('READ_MATRICULA'),
+    ('UPDATE_MATRICULA'),
+
+    -- FREQUENCIA
+    ('CREATE_FREQUENCIA'),
+    ('READ_FREQUENCIA'),
+    ('UPDATE_FREQUENCIA'),
+
+    -- ENCONTRO
+    ('CREATE_ENCONTRO'),
+    ('READ_ENCONTRO'),
+    ('UPDATE_ENCONTRO'),
+
+    -- CERTIFICADO
+    ('CREATE_CERTIFICADO'),
+    ('READ_CERTIFICADO'),
+    ('UPDATE_CERTIFICADO');
