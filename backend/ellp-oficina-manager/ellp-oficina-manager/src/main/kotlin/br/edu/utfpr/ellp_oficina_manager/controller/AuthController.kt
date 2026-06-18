@@ -1,4 +1,4 @@
-package br.edu.utfpr.ellp_oficina_manager.controller.auth
+package br.edu.utfpr.ellp_oficina_manager.controller
 
 import br.edu.utfpr.ellp_oficina_manager.model.usuario.LoginRequest
 import br.edu.utfpr.ellp_oficina_manager.model.usuario.LoginResponse

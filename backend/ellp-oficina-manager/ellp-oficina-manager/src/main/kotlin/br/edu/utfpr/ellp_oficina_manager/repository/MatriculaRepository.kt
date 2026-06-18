@@ -49,7 +49,7 @@ class MatriculaRepository(
             .set(MATRICULA.DATA_MATRICULA, matricula.dataMatricula)
             .set(MATRICULA.CERTIFICADO_EMITIDO, matricula.certificadoEmitido)
             .set(MATRICULA.UPDATED_AT, LocalDateTime.now())
-            .where(MATRICULA.ID.eq(matricula.alunoId))
+            .where(MATRICULA.ID.eq(matriculaId))
             .returning()
             .fetchOne { it.toModel() }
 
