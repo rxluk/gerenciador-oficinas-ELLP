@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../../components/Layout'
 import { useAuth } from '../../context/AuthContext'
 import oficinaService from '../../services/oficinaService'
+import { formatDate } from '../../utils/formatDate'
 
 export default function OficinaList() {
   const [oficinas, setOficinas] = useState([])
@@ -52,8 +53,8 @@ export default function OficinaList() {
                 <tr key={oficina.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-6 py-3 font-medium text-gray-800">{oficina.titulo}</td>
                   <td className="px-6 py-3 text-gray-500">{oficina.sala}</td>
-                  <td className="px-6 py-3 text-gray-500">{oficina.dataInicio}</td>
-                  <td className="px-6 py-3 text-gray-500">{oficina.dataFim}</td>
+                  <td className="px-6 py-3 text-gray-500">{formatDate(oficina.dataInicio)}</td>
+                  <td className="px-6 py-3 text-gray-500">{formatDate(oficina.dataFim)}</td>
                   {hasPermission('UPDATE_OFICINA') && (
                     <td className="px-6 py-3 text-right">
                       <button

@@ -53,6 +53,7 @@ export default function App() {
           <Route path="/frequencias/:id/editar" element={<ProtectedRoute permission="UPDATE_FREQUENCIA"><FrequenciaForm /></ProtectedRoute>} />
 
           <Route path="/usuarios" element={<ProtectedRoute permission="READ_USUARIO"><UsuarioList /></ProtectedRoute>} />
+          <Route path="/usuarios/novo" element={<ProtectedRoute permission="CREATE_USUARIO"><UsuarioForm /></ProtectedRoute>} />
           <Route path="/usuarios/:id/editar" element={<ProtectedRoute permission="UPDATE_USUARIO"><UsuarioForm /></ProtectedRoute>} />
 
           <Route path="/roles" element={<ProtectedRoute permission="READ_ROLE"><RoleList /></ProtectedRoute>} />

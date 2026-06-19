@@ -21,8 +21,16 @@ export default function UsuarioList() {
       <div className="bg-white rounded-xl shadow-sm">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-700">Lista de Usuários</h2>
+          {hasPermission('CREATE_USUARIO') && (
+            <button
+              onClick={() => navigate('/usuarios/novo')}
+              className="px-4 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90"
+              style={{ backgroundColor: '#1e3a5f' }}
+            >
+              + Novo Usuário
+            </button>
+          )}
         </div>
-
         {loading ? (
           <div className="p-10 text-center text-gray-400 text-sm">Carregando...</div>
         ) : usuarios.length === 0 ? (
