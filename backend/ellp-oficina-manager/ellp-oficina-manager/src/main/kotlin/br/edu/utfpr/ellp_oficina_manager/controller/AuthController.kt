@@ -6,6 +6,7 @@ import br.edu.utfpr.ellp_oficina_manager.model.usuario.RegisterRequest
 import br.edu.utfpr.ellp_oficina_manager.service.AuthService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,6 +25,7 @@ class AuthController(
     ): ResponseEntity<LoginResponse> =
         ResponseEntity.ok(authService.login(request))
 
+    @PreAuthorize("hasAuthority('CREATE_USUARIO')")
     @PostMapping("/register")
     fun register(
         @Valid @RequestBody request: RegisterRequest
