@@ -373,13 +373,11 @@ O sistema utiliza um modelo RBAC (Role-Based Access Control), permitindo separar
 
 ### Frontend
 
-* A definir
-
-### Testes
-
-* JUnit 5
-* Mockito
-* Spring Boot Test
+* React 18
+* Vite
+* Tailwind CSS v4
+* React Router DOM
+* Axios
 
 ### Arquitetura
 
