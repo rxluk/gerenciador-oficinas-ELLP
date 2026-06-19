@@ -1,0 +1,1 @@
+export default function AlunoForm() { return <div>em breve</div> }

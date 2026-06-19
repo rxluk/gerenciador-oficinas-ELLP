@@ -1,0 +1,1 @@
+export default function AlunoList() { return <div>em breve</div> }
