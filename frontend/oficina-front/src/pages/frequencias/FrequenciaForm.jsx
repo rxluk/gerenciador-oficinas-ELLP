@@ -3,56 +3,65 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Layout from '../../components/Layout'
 import frequenciaService from '../../services/frequenciaService'
 import api from '../../services/api'
+import { formatDate } from '../../utils/formatDate'
 
 export default function FrequenciaForm() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const isEdit = !!id
 
-  const [form, setForm] = useState({
-    matriculaId: '', encontroId: '', presente: false
-  })
-  const [matriculas, setMatriculas] = useState([])
-  const [encontros, setEncontros] = useState([])
+  const [presente, setPresente] = useState(false)
+  const [alunoNome, setAlunoNome] = useState('')
+  const [oficinaTitulo, setOficinaTitulo] = useState('')
+  const [encontroData, setEncontroData] = useState(null)
+  const [encontroHorario, setEncontroHorario] = useState('')
+  const [matriculaId, setMatriculaId] = useState(null)
+  const [encontroId, setEncontroId] = useState(null)
+  const [carregando, setCarregando] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api.get('/matriculas').then((res) => setMatriculas(res.data)).catch(() => {})
-    api.get('/encontros').then((res) => setEncontros(res.data)).catch(() => {})
+    async function carregar() {
+      try {
+        const fRes = await frequenciaService.findById(id)
+        const f = fRes.data
+        setPresente(f.presente)
+        setMatriculaId(f.matriculaId)
+        setEncontroId(f.encontroId)
 
-    if (isEdit) {
-      frequenciaService.findById(id).then((res) => {
-        const f = res.data
-        setForm({
-          matriculaId: f.matriculaId || '',
-          encontroId: f.encontroId || '',
-          presente: f.presente || false,
-        })
-      })
+        const [mRes, eRes] = await Promise.all([
+          api.get(`/matriculas/${f.matriculaId}`),
+          api.get(`/encontros/${f.encontroId}`),
+        ])
+
+        const [aRes, oRes] = await Promise.all([
+          api.get(`/alunos/${mRes.data.alunoId}`),
+          api.get(`/oficinas/${mRes.data.oficinaId}`),
+        ])
+
+        setAlunoNome(aRes.data.nome)
+        setOficinaTitulo(oRes.data.titulo)
+        setEncontroData(eRes.data.data)
+        setEncontroHorario(eRes.data.horarioInicio)
+      } catch {
+        setError('Erro ao carregar dados da frequência.')
+      } finally {
+        setCarregando(false)
+      }
     }
+    carregar()
   }, [id])
-
-  function handleChange(e) {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
-    setForm({ ...form, [e.target.name]: value })
-  }
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      const payload = {
-        ...form,
-        matriculaId: parseInt(form.matriculaId),
-        encontroId: parseInt(form.encontroId),
-      }
-      if (isEdit) {
-        await frequenciaService.update(id, payload)
-      } else {
-        await frequenciaService.insert(payload)
-      }
+      await frequenciaService.update(id, {
+        matriculaId,
+        encontroId,
+        presente,
+      })
       navigate('/frequencias')
     } catch (err) {
       setError(err.response?.data?.message || 'Erro ao salvar frequência.')
@@ -61,39 +70,55 @@ export default function FrequenciaForm() {
     }
   }
 
+  if (carregando) {
+    return (
+      <Layout title="Editar Frequência">
+        <div className="bg-white rounded-xl shadow-sm max-w-md p-10 text-center text-gray-400 text-sm">
+          Carregando...
+        </div>
+      </Layout>
+    )
+  }
+
   return (
-    <Layout title={isEdit ? 'Editar Frequência' : 'Nova Frequência'}>
-      <div className="bg-white rounded-xl shadow-sm max-w-2xl">
+    <Layout title="Editar Frequência">
+      <div className="bg-white rounded-xl shadow-sm max-w-md">
         <div className="px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-700">{isEdit ? 'Editar Frequência' : 'Registrar Frequência'}</h2>
+          <h2 className="font-semibold text-gray-700">Editar Frequência</h2>
         </div>
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Aluno</p>
+            <p className="text-sm font-medium text-gray-800">{alunoNome}</p>
+          </div>
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Oficina</p>
+            <p className="text-sm text-gray-700">{oficinaTitulo}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Matrícula *</label>
-              <select name="matriculaId" value={form.matriculaId} onChange={handleChange} required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 bg-white">
-                <option value="">Selecione...</option>
-                {matriculas.map((m) => (
-                  <option key={m.id} value={m.id}>Matrícula #{m.id} — Aluno #{m.alunoId}</option>
-                ))}
-              </select>
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Dia</p>
+              <p className="text-sm text-gray-700">{formatDate(encontroData)}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Encontro *</label>
-              <select name="encontroId" value={form.encontroId} onChange={handleChange} required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 bg-white">
-                <option value="">Selecione...</option>
-                {encontros.map((e) => (
-                  <option key={e.id} value={e.id}>Encontro #{e.id} — {e.data}</option>
-                ))}
-              </select>
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Horário</p>
+              <p className="text-sm text-gray-700">{encontroHorario}</p>
             </div>
-            <div className="flex items-center gap-2 mt-2">
-              <input name="presente" type="checkbox" checked={form.presente} onChange={handleChange}
-                className="w-4 h-4 rounded" id="presente" />
-              <label htmlFor="presente" className="text-sm font-medium text-gray-700">Presente</label>
-            </div>
+          </div>
+
+          <div className="pt-2 border-t border-gray-100">
+            <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Presença</p>
+            <button
+              type="button"
+              onClick={() => setPresente(!presente)}
+              className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                presente
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : 'bg-red-100 text-red-600 hover:bg-red-200'
+              }`}
+            >
+              {presente ? 'Presente' : 'Ausente'}
+            </button>
           </div>
 
           {error && <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</p>}

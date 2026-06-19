@@ -15,6 +15,7 @@ import MatriculaList from './pages/matriculas/MatriculaList'
 import MatriculaForm from './pages/matriculas/MatriculaForm'
 import FrequenciaList from './pages/frequencias/FrequenciaList'
 import FrequenciaForm from './pages/frequencias/FrequenciaForm'
+import FrequenciaChamada from './pages/frequencias/FrequenciaChamada'
 import UsuarioList from './pages/usuarios/UsuarioList'
 import UsuarioForm from './pages/usuarios/UsuarioForm'
 import RoleList from './pages/roles/RoleList'
@@ -49,8 +50,9 @@ export default function App() {
           <Route path="/matriculas/:id/editar" element={<ProtectedRoute permission="UPDATE_MATRICULA"><MatriculaForm /></ProtectedRoute>} />
 
           <Route path="/frequencias" element={<ProtectedRoute permission="READ_FREQUENCIA"><FrequenciaList /></ProtectedRoute>} />
-          <Route path="/frequencias/novo" element={<ProtectedRoute permission="CREATE_FREQUENCIA"><FrequenciaForm /></ProtectedRoute>} />
+          <Route path="/frequencias/novo" element={<ProtectedRoute permission="CREATE_FREQUENCIA"><FrequenciaChamada /></ProtectedRoute>} />
           <Route path="/frequencias/:id/editar" element={<ProtectedRoute permission="UPDATE_FREQUENCIA"><FrequenciaForm /></ProtectedRoute>} />
+          
 
           <Route path="/usuarios" element={<ProtectedRoute permission="READ_USUARIO"><UsuarioList /></ProtectedRoute>} />
           <Route path="/usuarios/novo" element={<ProtectedRoute permission="CREATE_USUARIO"><UsuarioForm /></ProtectedRoute>} />
