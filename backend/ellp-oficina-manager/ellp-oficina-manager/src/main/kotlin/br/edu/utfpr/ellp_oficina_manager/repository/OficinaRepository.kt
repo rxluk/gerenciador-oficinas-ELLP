@@ -51,6 +51,7 @@ class OficinaRepository(
                 .set(OFICINA.PROFESSOR_ID, oficina.professorId)
                 .set(OFICINA.CERTIFICADO_ID, oficina.certificadoId)
                 .set(OFICINA.TITULO, oficina.titulo)
+                .set(OFICINA.DESCRICAO, oficina.descricao)
                 .set(OFICINA.SALA, oficina.sala)
                 .set(OFICINA.DATA_INICIO, oficina.dataInicio)
                 .set(OFICINA.DATA_FIM, oficina.dataFim)

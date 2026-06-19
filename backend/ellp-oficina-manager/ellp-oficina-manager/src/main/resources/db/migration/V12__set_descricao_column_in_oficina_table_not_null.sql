@@ -1,0 +1,2 @@
+ALTER TABLE oficina
+    ALTER COLUMN descricao SET NOT NULL;
