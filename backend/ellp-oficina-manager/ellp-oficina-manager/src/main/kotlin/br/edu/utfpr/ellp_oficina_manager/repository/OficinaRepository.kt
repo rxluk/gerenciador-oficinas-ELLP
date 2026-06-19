@@ -40,6 +40,7 @@ class OficinaRepository(
             .set(OFICINA.CERTIFICADO_ID, oficina.certificadoId)
             .set(OFICINA.TITULO, oficina.titulo)
             .set(OFICINA.SALA, oficina.sala)
+            .set(OFICINA.DESCRICAO, oficina.descricao)
             .set(OFICINA.DATA_INICIO, oficina.dataInicio)
             .set(OFICINA.DATA_FIM, oficina.dataFim)
             .returning()
