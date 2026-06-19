@@ -7,6 +7,7 @@ import alunoService from '../../services/alunoService'
 export default function AlunoList() {
   const [alunos, setAlunos] = useState([])
   const [loading, setLoading] = useState(true)
+  const [busca, setBusca] = useState('')
   const { hasPermission } = useAuth()
   const navigate = useNavigate()
 
@@ -15,6 +16,16 @@ export default function AlunoList() {
       .then((res) => setAlunos(res.data))
       .finally(() => setLoading(false))
   }, [])
+
+  const termo = busca.trim().toLowerCase()
+  const alunosFiltrados = termo
+    ? alunos.filter((a) =>
+        a.nome.toLowerCase().includes(termo) ||
+        (a.email || '').toLowerCase().includes(termo) ||
+        (a.telefone || '').toLowerCase().includes(termo) ||
+        (a.serie || '').toLowerCase().includes(termo)
+      )
+    : alunos
 
   return (
     <Layout title="Alunos">
@@ -32,10 +43,27 @@ export default function AlunoList() {
           )}
         </div>
 
+        <div className="px-6 py-3 border-b border-gray-100">
+          <div className="relative max-w-sm">
+            <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar por nome, email, telefone, série..."
+              className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2"
+            />
+          </div>
+        </div>
+
         {loading ? (
           <div className="p-10 text-center text-gray-400 text-sm">Carregando...</div>
-        ) : alunos.length === 0 ? (
-          <div className="p-10 text-center text-gray-400 text-sm">Nenhum aluno cadastrado.</div>
+        ) : alunosFiltrados.length === 0 ? (
+          <div className="p-10 text-center text-gray-400 text-sm">
+            {termo ? 'Nenhum resultado encontrado.' : 'Nenhum aluno cadastrado.'}
+          </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
@@ -49,7 +77,7 @@ export default function AlunoList() {
               </tr>
             </thead>
             <tbody>
-              {alunos.map((aluno, i) => (
+              {alunosFiltrados.map((aluno, i) => (
                 <tr key={aluno.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                   <td className="px-6 py-3 font-medium text-gray-800">{aluno.nome}</td>
                   <td className="px-6 py-3 text-gray-500">{aluno.email || '-'}</td>
