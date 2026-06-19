@@ -108,7 +108,7 @@ export default function OficinaForm() {
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 bg-white">
                 <option value="">Selecione...</option>
                 {certificados.map((c) => (
-                  <option key={c.id} value={c.id}>{c.titulo || `Certificado #${c.id}`}</option>
+                  <option key={c.id} value={c.id}>{c.titulo || `${c.nome}`}</option>
                 ))}
               </select>
             </div>
