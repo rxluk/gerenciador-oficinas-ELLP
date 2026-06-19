@@ -1,1 +1,144 @@
-export default function OficinaForm() { return <div>em breve</div> }
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import Layout from '../../components/Layout'
+import oficinaService from '../../services/oficinaService'
+import api from '../../services/api'
+
+export default function OficinaForm() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const isEdit = !!id
+
+  const [form, setForm] = useState({
+    titulo: '', descricao: '', sala: '',
+    dataInicio: '', dataFim: '',
+    professorId: '', certificadoId: ''
+  })
+  const [usuarios, setUsuarios] = useState([])
+  const [certificados, setCertificados] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    api.get('/usuarios').then((res) => setUsuarios(res.data)).catch(() => {})
+    api.get('/certificados').then((res) => setCertificados(res.data)).catch(() => {})
+
+    if (isEdit) {
+      oficinaService.findById(id).then((res) => {
+        const o = res.data
+        setForm({
+          titulo: o.titulo || '',
+          descricao: o.descricao || '',
+          sala: o.sala || '',
+          dataInicio: o.dataInicio || '',
+          dataFim: o.dataFim || '',
+          professorId: o.professorId || '',
+          certificadoId: o.certificadoId || '',
+        })
+      })
+    }
+  }, [id])
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      const payload = {
+        ...form,
+        professorId: parseInt(form.professorId),
+        certificadoId: parseInt(form.certificadoId),
+      }
+      if (isEdit) {
+        await oficinaService.update(id, payload)
+      } else {
+        await oficinaService.insert(payload)
+      }
+      navigate('/oficinas')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Erro ao salvar oficina.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Layout title={isEdit ? 'Editar Oficina' : 'Nova Oficina'}>
+      <div className="bg-white rounded-xl shadow-sm max-w-2xl">
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h2 className="font-semibold text-gray-700">{isEdit ? 'Editar Oficina' : 'Cadastrar Oficina'}</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+              <input name="titulo" value={form.titulo} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2"
+                placeholder="Título da oficina" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Descrição *</label>
+              <textarea name="descricao" value={form.descricao} onChange={handleChange} required rows={3}
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 resize-none"
+                placeholder="Descrição da oficina" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Sala *</label>
+              <input name="sala" value={form.sala} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2"
+                placeholder="Ex: Sala 101" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Professor *</label>
+              <select name="professorId" value={form.professorId} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 bg-white">
+                <option value="">Selecione...</option>
+                {usuarios.map((u) => (
+                  <option key={u.id} value={u.id}>{u.nome || u.email}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Certificado *</label>
+              <select name="certificadoId" value={form.certificadoId} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 bg-white">
+                <option value="">Selecione...</option>
+                {certificados.map((c) => (
+                  <option key={c.id} value={c.id}>{c.titulo || `Certificado #${c.id}`}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data de Início *</label>
+              <input name="dataInicio" type="date" value={form.dataInicio} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Data de Fim *</label>
+              <input name="dataFim" type="date" value={form.dataFim} onChange={handleChange} required
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2" />
+            </div>
+          </div>
+
+          {error && <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+
+          <div className="flex gap-3 pt-2">
+            <button type="submit" disabled={loading}
+              className="px-5 py-2 rounded-lg text-white text-sm font-medium hover:opacity-90 disabled:opacity-60"
+              style={{ backgroundColor: '#1e3a5f' }}>
+              {loading ? 'Salvando...' : 'Salvar'}
+            </button>
+            <button type="button" onClick={() => navigate('/oficinas')}
+              className="px-5 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </Layout>
+  )
+}
