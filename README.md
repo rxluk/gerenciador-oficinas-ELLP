@@ -345,10 +345,6 @@ O sistema utiliza um modelo RBAC (Role-Based Access Control), permitindo separar
 * EDITAR_CERTIFICADO
 * EMITIR_CERTIFICADO
 
-#### Auditoria
-
-* VISUALIZAR_LOGS
-
 ---
 
 ## Tecnologias Planejadas
@@ -392,3 +388,77 @@ web/
 ```
 
 A estrutura foi definida para permitir a separação clara entre backend e frontend, facilitando manutenção, testes automatizados e futuras evoluções do sistema.
+
+## Requisitos
+
+* Node.js 18 ou superior
+* npm
+* Java 21
+* Maven
+* PostgreSQL
+
+## Como rodar o projeto
+
+### 1. Banco de Dados
+
+Crie o banco de dados no PostgreSQL:
+
+```sql
+CREATE DATABASE ellp_oficina_manager;
+```
+
+### 2. Backend
+
+1. Acesse `src/main/resources/application.yaml` e configure a conexão com o banco:
+
+```yaml
+datasource:
+  url: jdbc:postgresql://localhost:5432/ellp_oficina_manager
+  username: postgres
+  password: postgres
+```
+
+2. Instale as dependências e compile o projeto:
+
+```bash
+mvn clean install
+```
+
+3. Gere a camada de acesso ao banco (jOOQ):
+
+```bash
+mvn jooq-codegen:generate
+```
+
+> As migrations do Flyway são executadas automaticamente na inicialização da aplicação, criando e populando o banco conforme necessário.
+
+4. Rode a aplicação:
+
+```bash
+mvn spring-boot:run
+```
+
+O backend ficará disponível em `http://localhost:8080`.
+
+### 3. Frontend
+
+1. Instale as dependências:
+
+```bash
+npm install
+```
+
+2. Rode o projeto:
+
+```bash
+npm run dev
+```
+
+O frontend ficará disponível em `http://localhost:5173`.
+
+### 4. Login padrão
+
+```
+Email: admin@admin
+Senha: admin123
+```
